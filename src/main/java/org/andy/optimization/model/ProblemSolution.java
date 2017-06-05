@@ -12,6 +12,7 @@ public class ProblemSolution {
 
     private Map<DecisionVariable, Double> variableToSolutionValue;
     private double objectiveValue;
+    private double timeElapsed;
 
     public ProblemSolution() {
         this.variableToSolutionValue = new HashMap<>();
@@ -47,5 +48,13 @@ public class ProblemSolution {
 
     public void setObjectiveValue(double objectiveValue) {
         this.objectiveValue = objectiveValue;
+    }
+
+    public double getTimeElapsed() {
+        return timeElapsed;
+    }
+
+    public void setTimeElapsed(double timeElapsed) {
+        this.timeElapsed = timeElapsed;
     }
 }

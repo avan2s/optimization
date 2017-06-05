@@ -35,7 +35,7 @@ public class BranchAndBound {
         while (!this.activeProblems.isEmpty()) {
             // select a problem and remove it from the queue
             selectedProblem = this.activeProblems.poll();
-            System.out.println(selectedProblem);
+            // System.out.println(selectedProblem);
             this.modelSolver.setOptimizationModel(selectedProblem);
             ProblemSolution solution = this.modelSolver.solveContiniously();
 

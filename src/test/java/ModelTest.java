@@ -18,7 +18,7 @@ import java.util.List;
 public class ModelTest {
 
     @Test
-    public void testRounds(){
+    public void testRounds() {
         double ceil = Math.ceil(-3.6D);
         double floor = Math.floor(-3.6D);
         System.out.println(">= " + ceil);
@@ -108,28 +108,22 @@ public class ModelTest {
     @Test
     public void testModelWithOwnApiMIP() {
         // Define decision variables
-        DecisionVariable dX = new DecisionVariable("x", DecisionVariableType.INTEGER, 0);
-        DecisionVariable dY = new DecisionVariable("y", DecisionVariableType.CONTINIOUS, 5);
-        DecisionVariable dZ = new DecisionVariable("z", DecisionVariableType.CONTINIOUS, 0);
+        DecisionVariable dX = new DecisionVariable("x", DecisionVariableType.INTEGER);
+        DecisionVariable dY = new DecisionVariable("y", DecisionVariableType.INTEGER, 0);
 
         // Define objective function
         LinearObjective linearObjective = new LinearObjective(GoalType.MAXIMIZE);
-        linearObjective.addTerm(10, dX);
-        linearObjective.addTerm(20, dY);
-        linearObjective.addTerm(40, dZ);
+        linearObjective.addTerm(1, dX);
+        linearObjective.addTerm(2, dY);
 
         // Define constraints
-        org.andy.optimization.model.LinearConstraint linearConstraint1 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 48.2);
+        org.andy.optimization.model.LinearConstraint linearConstraint1 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 7);
         linearConstraint1.addTerm(1, dX);
-        linearConstraint1.addTerm(1, dY);
+        linearConstraint1.addTerm(3, dY);
 
-        org.andy.optimization.model.LinearConstraint linearConstraint2 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 200);
-        linearConstraint2.addTerm(2, dZ);
+        org.andy.optimization.model.LinearConstraint linearConstraint2 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 10);
+        linearConstraint2.addTerm(3, dX);
         linearConstraint2.addTerm(2, dY);
-
-        org.andy.optimization.model.LinearConstraint linearConstraint3 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 90);
-        linearConstraint3.addTerm(1, dY);
-        linearConstraint3.addTerm(1, dZ);
 
 
         // construct the model
@@ -138,10 +132,8 @@ public class ModelTest {
         model.addDecisionVariable(dY);
         model.addLinearConstraint(linearConstraint1);
         model.addLinearConstraint(linearConstraint2);
-        model.addLinearConstraint(linearConstraint3);
         model.setObjective(linearObjective);
 
-        System.out.println(model);
         // Solve the problem with a solver
         LinearModelSolver linearModelSolver = new LinearModelSolver(model);
         ProblemSolution solution = linearModelSolver.solve();
@@ -149,6 +141,7 @@ public class ModelTest {
             System.out.println(decisionVariable.getName() + " = " + solution.getVariableToSolutionValue().get(decisionVariable));
         }
         System.out.println("objective = " + solution.getObjectiveValue());
+        System.out.println("elapsedTime:" + solution.getTimeElapsed() + " ms");
     }
 
 

@@ -45,7 +45,9 @@ public class LinearModelSolver {
 
     public ProblemSolution solve() {
         BranchAndBound branchAndBound = new BranchAndBound(this.optimizationModel);
-        return branchAndBound.solve();
+        ProblemSolution problemSolution = branchAndBound.solve();
+        problemSolution.setTimeElapsed(branchAndBound.getElapsedTime());
+        return problemSolution;
     }
 
     private LinearObjectiveFunction createLinearObjectiveFunction() {
