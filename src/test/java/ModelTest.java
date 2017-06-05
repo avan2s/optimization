@@ -105,5 +105,51 @@ public class ModelTest {
         System.out.println("objective = " + solution.getObjectiveValue());
     }
 
+    @Test
+    public void testModelWithOwnApiMIP() {
+        // Define decision variables
+        DecisionVariable dX = new DecisionVariable("x", DecisionVariableType.INTEGER, 0);
+        DecisionVariable dY = new DecisionVariable("y", DecisionVariableType.CONTINIOUS, 5);
+        DecisionVariable dZ = new DecisionVariable("z", DecisionVariableType.CONTINIOUS, 0);
+
+        // Define objective function
+        LinearObjective linearObjective = new LinearObjective(GoalType.MAXIMIZE);
+        linearObjective.addTerm(10, dX);
+        linearObjective.addTerm(20, dY);
+        linearObjective.addTerm(40, dZ);
+
+        // Define constraints
+        org.andy.optimization.model.LinearConstraint linearConstraint1 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 48.2);
+        linearConstraint1.addTerm(1, dX);
+        linearConstraint1.addTerm(1, dY);
+
+        org.andy.optimization.model.LinearConstraint linearConstraint2 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 200);
+        linearConstraint2.addTerm(2, dZ);
+        linearConstraint2.addTerm(2, dY);
+
+        org.andy.optimization.model.LinearConstraint linearConstraint3 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 90);
+        linearConstraint3.addTerm(1, dY);
+        linearConstraint3.addTerm(1, dZ);
+
+
+        // construct the model
+        LinearOptimizationModel model = new LinearOptimizationModel();
+        model.addDecisionVariable(dX);
+        model.addDecisionVariable(dY);
+        model.addLinearConstraint(linearConstraint1);
+        model.addLinearConstraint(linearConstraint2);
+        model.addLinearConstraint(linearConstraint3);
+        model.setObjective(linearObjective);
+
+        System.out.println(model);
+        // Solve the problem with a solver
+        LinearModelSolver linearModelSolver = new LinearModelSolver(model);
+        ProblemSolution solution = linearModelSolver.solve();
+        for (DecisionVariable decisionVariable : model.getDecisionVariables()) {
+            System.out.println(decisionVariable.getName() + " = " + solution.getVariableToSolutionValue().get(decisionVariable));
+        }
+        System.out.println("objective = " + solution.getObjectiveValue());
+    }
+
 
 }

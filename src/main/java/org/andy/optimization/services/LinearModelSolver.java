@@ -2,9 +2,9 @@ package org.andy.optimization.services;
 
 import org.andy.optimization.model.*;
 import org.apache.commons.math3.optim.PointValuePair;
-import org.apache.commons.math3.optim.linear.LinearConstraint;
 import org.apache.commons.math3.optim.linear.LinearConstraintSet;
 import org.apache.commons.math3.optim.linear.LinearObjectiveFunction;
+import org.apache.commons.math3.optim.linear.NoFeasibleSolutionException;
 import org.apache.commons.math3.optim.linear.SimplexSolver;
 
 import java.util.ArrayList;
@@ -17,27 +17,35 @@ public class LinearModelSolver {
 
     private LinearOptimizationModel optimizationModel;
     private SimplexSolver linearOptimizer = new SimplexSolver();
-    private BranchAndBound branchAndBound;
 
     public LinearModelSolver(LinearOptimizationModel optimizationModel) {
         this.optimizationModel = optimizationModel;
     }
 
-    public ProblemSolution solve() {
+    public ProblemSolution solveContiniously() {
         ProblemSolution problemSolution = null;
         this.setUpIndices();
 
         LinearConstraintSet constraintSet = this.createLinearConstraintSet(); // new LinearConstraintSet(this.linearConstraints);
         LinearObjectiveFunction linearObjectiveFunction = this.createLinearObjectiveFunction();
         if (linearObjectiveFunction != null) {
-            PointValuePair solution = linearOptimizer.optimize(linearObjectiveFunction, constraintSet, this.optimizationModel.getObjective().getGoalType());
-            problemSolution = new ProblemSolution();
-            for (DecisionVariable decisionVariable : this.optimizationModel.getDecisionVariables()) {
-                problemSolution.getVariableToSolutionValue().put(decisionVariable,solution.getPoint()[decisionVariable.getIndex()]);
+            try {
+                PointValuePair solution = linearOptimizer.optimize(linearObjectiveFunction, constraintSet, this.optimizationModel.getObjective().getGoalType());
+                problemSolution = new ProblemSolution();
+                for (DecisionVariable decisionVariable : this.optimizationModel.getDecisionVariables()) {
+                    problemSolution.getVariableToSolutionValue().put(decisionVariable, solution.getPoint()[decisionVariable.getIndex()]);
+                }
+                problemSolution.setObjectiveValue(solution.getValue());
+            } catch (NoFeasibleSolutionException ex) {
+                return null;
             }
-            problemSolution.setObjectiveValue(solution.getValue());
         }
         return problemSolution;
+    }
+
+    public ProblemSolution solve() {
+        BranchAndBound branchAndBound = new BranchAndBound(this.optimizationModel);
+        return branchAndBound.solve();
     }
 
     private LinearObjectiveFunction createLinearObjectiveFunction() {
@@ -49,15 +57,15 @@ public class LinearModelSolver {
     }
 
     private LinearConstraintSet createLinearConstraintSet() {
-        List<org.andy.optimization.model.LinearConstraint> constraintsToConvert = this.optimizationModel.getLinearConstraints();
+        List<LinearConstraint> constraintsToConvert = this.optimizationModel.getLinearConstraints();
 
         // constraints for apache commons math 3
-        List<LinearConstraint> constraints = new ArrayList<>();
+        List<org.apache.commons.math3.optim.linear.LinearConstraint> constraints = new ArrayList<>();
 
         // prepare the constraints for apache commons math 3 by own defined constraints inside the model
-        for (org.andy.optimization.model.LinearConstraint constraintToConvert : constraintsToConvert) {
+        for (LinearConstraint constraintToConvert : constraintsToConvert) {
             double[] coefficientsForConstraint = this.createCoefficientsByLinearExpression(constraintToConvert.getLinearExpression());
-            LinearConstraint constraint = new LinearConstraint(coefficientsForConstraint, constraintToConvert.getRelationship(), constraintToConvert.getInclusiveBound());
+            org.apache.commons.math3.optim.linear.LinearConstraint constraint = new org.apache.commons.math3.optim.linear.LinearConstraint(coefficientsForConstraint, constraintToConvert.getRelationship(), constraintToConvert.getInclusiveBound());
             constraints.add(constraint);
         }
 

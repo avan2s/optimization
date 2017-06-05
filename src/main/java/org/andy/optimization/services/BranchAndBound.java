@@ -21,23 +21,23 @@ public class BranchAndBound {
     private Queue<LinearOptimizationModel> activeProblems;
 
     public BranchAndBound(LinearOptimizationModel model) {
+        this.modelSolver = new LinearModelSolver(model);
         this.activeProblems = new LinkedList<>();
         this.rootOptimizationModel = model;
         this.activeProblems.add(rootOptimizationModel);
         this.goalType = this.rootOptimizationModel.getObjective().getGoalType();
     }
 
-    public void solve() {
+    public ProblemSolution solve() {
         LinearOptimizationModel selectedProblem;
-        double Li;
         Date d0 = new Date();
 
         while (!this.activeProblems.isEmpty()) {
-
-            // select a problem and remove it from queue
+            // select a problem and remove it from the queue
             selectedProblem = this.activeProblems.poll();
+            System.out.println(selectedProblem);
             this.modelSolver.setOptimizationModel(selectedProblem);
-            ProblemSolution solution = this.modelSolver.solve();
+            ProblemSolution solution = this.modelSolver.solveContiniously();
 
             // TODO: and there is a solution found in the problem
             if (solution == null) {
@@ -57,7 +57,7 @@ public class BranchAndBound {
             else {
                 // if we have a valid current best solution already and the current solution (also without integers) is not better - than there is no hope, that there will be a better value on branching
                 // so don't branch
-                if (!solution.isBetterThan(this.currentBest.getValue(), this.goalType)) {
+                if (this.currentBest != null && !solution.isBetterThan(this.currentBest.getValue(), this.goalType)) {
                     continue;
                 }
 
@@ -77,17 +77,12 @@ public class BranchAndBound {
         // calculate the calculation time
         Date d1 = new Date();
         this.elapsedTime = (double) (d1.getTime() - d0.getTime()) / 1000;
-    }
 
-    private LinearOptimizationModel selectProblem() {
-//        LinearOptimizationModel selected;
-//        //Sort the vector by the value
-//        VectorSort.sort(this.activeProblems, opc);
-//        //Select the best element and remove it from the list
-//        selected = (OptimizationProblem) this.activeProblems.poll();
-//        this.activeproblems.removeElementAt(this.activeproblems.size
-//                () - 1);
-        return this.activeProblems.poll();
+        if (this.currentBest == null) {
+            return null;
+        }
+
+        return this.currentBest.getValue();
     }
 
     private Map.Entry<DecisionVariable, Double> nextIntegerVariable(ProblemSolution problemSolution) {
@@ -98,7 +93,7 @@ public class BranchAndBound {
             if (decisionVariable.getVariableType() == DecisionVariableType.INTEGER || decisionVariable.getVariableType() == DecisionVariableType.BINARY) {
                 double doubleValue = solutionValue.doubleValue();
                 // if is integer
-                if (((doubleValue == Math.floor(doubleValue)) && !Double.isInfinite(doubleValue))) {
+                if ((!(doubleValue == Math.floor(doubleValue)) && !Double.isInfinite(doubleValue))) {
                     return entry;
                 }
             }
@@ -136,7 +131,7 @@ public class BranchAndBound {
         return relaxation;
     }
 
-    public List<LinearOptimizationModel> createRelaxations(LinearOptimizationModel optimizationModel, DecisionVariable decisionVariable, double solutionValue) {
+    private List<LinearOptimizationModel> createRelaxations(LinearOptimizationModel optimizationModel, DecisionVariable decisionVariable, double solutionValue) {
         List<Relationship> relationships = Arrays.asList(Relationship.LEQ, Relationship.GEQ);
         List<LinearOptimizationModel> relaxations = new ArrayList<>();
         relationships.forEach(relationship -> relaxations.add(this.createRelaxation(optimizationModel, decisionVariable, solutionValue, relationship)));
