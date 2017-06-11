@@ -17,9 +17,11 @@ public class CombinationVariable extends DecisionVariable {
     private List<DecisionVariable> subVariables = new ArrayList<>();
     private LinearExpression linearExpressionToInsert = new LinearExpression();
     private LinearConstraint chooseOnlyOneConstraint;
+    private List<Double> allowedValues;
 
     public CombinationVariable(String name, List<Double> allowedValues) {
         super(name, DecisionVariableType.COMBINATION);
+        this.allowedValues = allowedValues;
 
         // for each allowed value one binary decision variable
         int nameIndex = 0;
@@ -55,5 +57,9 @@ public class CombinationVariable extends DecisionVariable {
 
     public LinearConstraint getChooseOnlyOneConstraint() {
         return chooseOnlyOneConstraint;
+    }
+
+    public List<Double> getAllowedValues() {
+        return allowedValues;
     }
 }
