@@ -22,6 +22,11 @@ public class LinearConstraint {
         this.inclusiveBound = inclusiveBound;
     }
 
+    public LinearConstraint(LinearExpression leftLinearExpression, Relationship relationship, LinearExpression rightLinearExpression) {
+        this.linearExpression = leftLinearExpression;
+        this.relationship = relationship;
+    }
+
     public void addTerm(double coefficient, DecisionVariable decisionVariable) {
         this.linearExpression.addTerm(coefficient, decisionVariable);
     }
@@ -33,9 +38,14 @@ public class LinearConstraint {
         return sb.toString();
     }
 
-    public void setConstant(double value) {
+    public void addConstant(double value) {
+        this.linearExpression.addConstant(value);
+    }
+
+    public void setConstant(double value){
         this.linearExpression.setConstant(value);
     }
+
 
     public LinearExpression getLinearExpression() {
         return linearExpression;
@@ -49,15 +59,7 @@ public class LinearConstraint {
         return relationship;
     }
 
-    public void setRelationship(Relationship relationship) {
-        this.relationship = relationship;
-    }
-
     public double getInclusiveBound() {
         return inclusiveBound;
-    }
-
-    public void setInclusiveBound(double inclusiveBound) {
-        this.inclusiveBound = inclusiveBound;
     }
 }

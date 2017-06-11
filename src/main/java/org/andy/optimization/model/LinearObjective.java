@@ -31,8 +31,12 @@ public class LinearObjective {
         return sb.toString();
     }
 
-    public void setConstant(double value) {
+    public void addConstant(double value) {
+        this.linearExpression.addConstant(this.linearExpression.getConstant());
+    }
 
+    public void setConstant(double value){
+        this.linearExpression.setConstant(value);
     }
 
     public void setGoalType(GoalType goalType) {

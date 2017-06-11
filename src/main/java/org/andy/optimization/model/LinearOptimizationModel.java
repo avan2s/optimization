@@ -4,9 +4,7 @@ import org.andy.optimization.api.ILinearOptimizationModel;
 import org.apache.commons.math3.optim.linear.Relationship;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Andy on 05.06.2017.

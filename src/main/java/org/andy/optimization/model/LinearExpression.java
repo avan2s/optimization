@@ -18,8 +18,12 @@ public class LinearExpression {
         this.terms.add(new LinearTerm(coefficient, decisionVariable));
     }
 
-    public void setConstant(double value) {
-        this.constant = value;
+    public void addConstant(double value) {
+        this.constant = this.constant + value;
+    }
+
+    public void setConstant(double constant) {
+        this.constant = constant;
     }
 
     public List<LinearTerm> getTerms() {
@@ -39,6 +43,10 @@ public class LinearExpression {
             }
             sb.append(term.getCoefficent()).append("*").append(term.getDecisionVariable().getName());
         }
+        if(this.getConstant() > 0){
+            sb.append(" + ").append(this.getConstant());
+        }
+
         return sb.toString();
     }
 }

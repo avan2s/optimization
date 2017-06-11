@@ -54,7 +54,7 @@ public class LinearModelSolver {
         LinearObjective objective = this.optimizationModel.getObjective();
         LinearExpression linearExpression = objective.getLinearExpression();
         double[] coefficients = this.createCoefficientsByLinearExpression(linearExpression);
-        LinearObjectiveFunction f = new LinearObjectiveFunction(coefficients, 0);
+        LinearObjectiveFunction f = new LinearObjectiveFunction(coefficients, linearExpression.getConstant());
         return f;
     }
 
@@ -66,8 +66,12 @@ public class LinearModelSolver {
 
         // prepare the constraints for apache commons math 3 by own defined constraints inside the model
         for (LinearConstraint constraintToConvert : constraintsToConvert) {
+            // convert 2x + 3y + 10 <= 15 to: 2x + 3y <= 5
+            double inclusiveBoundForCalculation = constraintToConvert.getInclusiveBound() - constraintToConvert.getLinearExpression().getConstant();
+            // calculate all coefficients
             double[] coefficientsForConstraint = this.createCoefficientsByLinearExpression(constraintToConvert.getLinearExpression());
-            org.apache.commons.math3.optim.linear.LinearConstraint constraint = new org.apache.commons.math3.optim.linear.LinearConstraint(coefficientsForConstraint, constraintToConvert.getRelationship(), constraintToConvert.getInclusiveBound());
+            org.apache.commons.math3.optim.linear.LinearConstraint constraint = new org.apache.commons.math3.optim.linear.LinearConstraint
+                    (coefficientsForConstraint, constraintToConvert.getRelationship(), inclusiveBoundForCalculation);
             constraints.add(constraint);
         }
 
