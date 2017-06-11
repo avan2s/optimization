@@ -10,6 +10,10 @@ public class LinearConstraint {
     private Relationship relationship;
     private LinearExpression linearExpressionRhs = new LinearExpression();
 
+    public LinearConstraint(Relationship relationship) {
+        this.relationship = relationship;
+    }
+
     public LinearConstraint(Relationship relationship, double inclusiveBound) {
         this.relationship = relationship;
         this.linearExpressionRhs.setConstant(inclusiveBound);
@@ -68,6 +72,10 @@ public class LinearConstraint {
 
     public void setLinearExpressionRhs(LinearExpression linearExpressionRhs) {
         this.linearExpressionRhs = linearExpressionRhs;
+    }
+
+    public void setBound(double value) {
+        this.linearExpressionRhs.setConstant(value);
     }
 
     public Relationship getRelationship() {

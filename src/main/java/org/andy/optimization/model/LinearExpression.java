@@ -1,5 +1,7 @@
 package org.andy.optimization.model;
 
+import org.andy.optimization.enums.DecisionVariableType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +12,19 @@ public class LinearExpression {
     private List<LinearTerm> terms;
     private double constant = 0;
 
-    public LinearExpression(){
+    public LinearExpression() {
         this.terms = new ArrayList<>();
     }
 
     public void addTerm(double coefficient, DecisionVariable decisionVariable) {
-        this.terms.add(new LinearTerm(coefficient, decisionVariable));
+        if (decisionVariable.getVariableType() == DecisionVariableType.COMBINATION) {
+            //replace decision variable Xi with expression (2w1 + 3w2 + 5w3)
+            CombinationVariable combiVar = (CombinationVariable) decisionVariable;
+            List<LinearTerm> terms = combiVar.getLinearExpressionToInsert().getTerms();
+            terms.forEach(term -> this.terms.add(new LinearTerm(term.getCoefficent()* coefficient, term.getDecisionVariable())));
+        } else {
+            this.terms.add(new LinearTerm(coefficient, decisionVariable));
+        }
     }
 
     public void addConstant(double value) {
@@ -37,16 +46,18 @@ public class LinearExpression {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(LinearTerm term : terms){
-            if(sb.length() > 0){
+        for (LinearTerm term : terms) {
+            if (sb.length() > 0) {
                 sb.append(" + ");
             }
             sb.append(term.getCoefficent()).append("*").append(term.getDecisionVariable().getName());
         }
         int termSize = terms.size();
-        if(termSize > 0 && this.getConstant() > 0){
+        if (termSize == 0) {
+            sb.append(this.getConstant());
+        } else if (termSize > 0 && this.getConstant() > 0) {
             sb.append(" + ").append(this.getConstant());
-        }else{
+        } else if (termSize > 0 && this.getConstant() < 0) {
             sb.append(this.getConstant());
         }
 

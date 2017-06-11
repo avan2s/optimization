@@ -1,6 +1,7 @@
 package org.andy.optimization.model;
 
 import org.andy.optimization.api.ILinearOptimizationModel;
+import org.andy.optimization.enums.DecisionVariableType;
 import org.apache.commons.math3.optim.linear.Relationship;
 
 import java.util.ArrayList;
@@ -35,6 +36,20 @@ public class LinearOptimizationModel implements ILinearOptimizationModel {
             LinearConstraint upperBoundConstraint = new LinearConstraint(linearExpression, Relationship.LEQ, variable.getUpperInclusiveBound());
             this.linearConstraints.add(lowerBoundConstraint);
             this.linearConstraints.add(upperBoundConstraint);
+
+            // add the sub stuff, which is needed for combination variable
+            if (variable.getVariableType() == DecisionVariableType.COMBINATION) {
+                // add the linear constraint
+                CombinationVariable combiVariable = (CombinationVariable) variable;
+
+                // let [2,3,5] allowed values, then for each binary decision sub variable wi
+                // w1 + w2 + w3 = 1
+                this.addLinearConstraint(combiVariable.getChooseOnlyOneConstraint());
+
+                // add subVariables
+                List<DecisionVariable> subVariables = combiVariable.getSubVariables();
+                subVariables.forEach((subVariable) -> this.addDecisionVariable(subVariable));
+            }
         }
     }
 

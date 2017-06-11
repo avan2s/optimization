@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -76,7 +77,6 @@ public class ModelTest {
         org.andy.optimization.model.LinearConstraint linearConstraint1 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 48.2);
         linearConstraint1.addTermLhs(1, dX);
         linearConstraint1.addTermLhs(1, dY);
-        System.out.println(linearConstraint1);
 
         org.andy.optimization.model.LinearConstraint linearConstraint2 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 200);
         linearConstraint2.addTermLhs(2, dZ);
@@ -134,6 +134,43 @@ public class ModelTest {
         model.addLinearConstraint(linearConstraint1);
         model.addLinearConstraint(linearConstraint2);
         model.setObjective(linearObjective);
+
+        // Solve the problem with a solver
+        LinearModelSolver linearModelSolver = new LinearModelSolver(model);
+        ProblemSolution solution = linearModelSolver.solve();
+        for (DecisionVariable decisionVariable : model.getDecisionVariables()) {
+            System.out.println(decisionVariable.getName() + " = " + solution.getVariableToSolutionValue().get(decisionVariable));
+        }
+        System.out.println("objective = " + solution.getObjectiveValue());
+        System.out.println("elapsedTime:" + solution.getTimeElapsed() + " ms");
+    }
+
+    @Test
+    public void testModelWithCombinationalVariables() {
+        // Define decision variables
+        // x can be either 2, 5 or 10
+        DecisionVariable dX = new CombinationVariable("x", Arrays.asList(2D, 5D, 10D));
+        DecisionVariable dY = new DecisionVariable("y", DecisionVariableType.INTEGER, 0);
+
+
+        // Define objective function
+        LinearObjective linearObjective = new LinearObjective(GoalType.MAXIMIZE);
+        linearObjective.addTerm(1, dX);
+        linearObjective.addTerm(2, dY);
+
+        // Define constraints
+        // 1x + 3y <= 10
+        org.andy.optimization.model.LinearConstraint linearConstraint1 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 9);
+        linearConstraint1.addTermLhs(1, dX);
+        linearConstraint1.addTermLhs(3, dY);
+
+        // construct the model
+        LinearOptimizationModel model = new LinearOptimizationModel();
+        model.addDecisionVariable(dX);
+        model.addDecisionVariable(dY);
+        model.addLinearConstraint(linearConstraint1);
+        model.setObjective(linearObjective);
+        System.out.println(model);
 
         // Solve the problem with a solver
         LinearModelSolver linearModelSolver = new LinearModelSolver(model);

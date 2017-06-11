@@ -7,8 +7,8 @@ import org.andy.optimization.enums.DecisionVariableType;
  */
 public class DecisionVariable {
 
-    private DecisionVariableType variableType;
-    private String name;
+    protected DecisionVariableType variableType;
+    protected String name;
     private int index = -1;
     private double lowerInclusiveBound;
     private double upperInclusiveBound;
