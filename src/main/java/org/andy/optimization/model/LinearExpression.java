@@ -43,8 +43,11 @@ public class LinearExpression {
             }
             sb.append(term.getCoefficent()).append("*").append(term.getDecisionVariable().getName());
         }
-        if(this.getConstant() > 0){
+        int termSize = terms.size();
+        if(termSize > 0 && this.getConstant() > 0){
             sb.append(" + ").append(this.getConstant());
+        }else{
+            sb.append(this.getConstant());
         }
 
         return sb.toString();

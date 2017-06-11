@@ -46,7 +46,10 @@ public class LinearModelSolver {
     public ProblemSolution solve() {
         BranchAndBound branchAndBound = new BranchAndBound(this.optimizationModel);
         ProblemSolution problemSolution = branchAndBound.solve();
-        problemSolution.setTimeElapsed(branchAndBound.getElapsedTime());
+        // TODO: make solution result -> not found or something, but create also an instance of problem solutionResult
+        if(problemSolution != null) {
+            problemSolution.setTimeElapsed(branchAndBound.getElapsedTime());
+        }
         return problemSolution;
     }
 
@@ -66,12 +69,22 @@ public class LinearModelSolver {
 
         // prepare the constraints for apache commons math 3 by own defined constraints inside the model
         for (LinearConstraint constraintToConvert : constraintsToConvert) {
-            // convert 2x + 3y + 10 <= 15 to: 2x + 3y <= 5
-            double inclusiveBoundForCalculation = constraintToConvert.getInclusiveBound() - constraintToConvert.getLinearExpression().getConstant();
             // calculate all coefficients
-            double[] coefficientsForConstraint = this.createCoefficientsByLinearExpression(constraintToConvert.getLinearExpression());
-            org.apache.commons.math3.optim.linear.LinearConstraint constraint = new org.apache.commons.math3.optim.linear.LinearConstraint
-                    (coefficientsForConstraint, constraintToConvert.getRelationship(), inclusiveBoundForCalculation);
+            double[] coefficientsForConstraintLhs = this.createCoefficientsByLinearExpression(constraintToConvert.getLinearExpressionLhs());
+
+            org.apache.commons.math3.optim.linear.LinearConstraint constraint;
+            if (constraintToConvert.getLinearExpressionRhs().getTerms().size() == 0) {
+                // convert 2x + 3y + 10 <= 15 to: 2x + 3y <= 5
+                double inclusiveBoundForCalculation = constraintToConvert.getLinearExpressionRhs().getConstant() - constraintToConvert.getLinearExpressionLhs().getConstant();
+                constraint = new org.apache.commons.math3.optim.linear.LinearConstraint(coefficientsForConstraintLhs, constraintToConvert.getRelationship(), inclusiveBoundForCalculation);
+            } else {
+                double[] coefficientsForConstraintRhs = this.createCoefficientsByLinearExpression(constraintToConvert.getLinearExpressionRhs());
+                double lhsConstant = constraintToConvert.getLinearExpressionLhs().getConstant();
+                double rhsConstant = constraintToConvert.getLinearExpressionRhs().getConstant();
+                constraint = new org.apache.commons.math3.optim.linear.LinearConstraint(coefficientsForConstraintLhs, lhsConstant,
+                        constraintToConvert.getRelationship(), coefficientsForConstraintRhs, rhsConstant);
+            }
+
             constraints.add(constraint);
         }
 

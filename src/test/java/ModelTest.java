@@ -74,16 +74,17 @@ public class ModelTest {
 
         // Define constraints
         org.andy.optimization.model.LinearConstraint linearConstraint1 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 48.2);
-        linearConstraint1.addTerm(1, dX);
-        linearConstraint1.addTerm(1, dY);
+        linearConstraint1.addTermLhs(1, dX);
+        linearConstraint1.addTermLhs(1, dY);
+        System.out.println(linearConstraint1);
 
         org.andy.optimization.model.LinearConstraint linearConstraint2 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 200);
-        linearConstraint2.addTerm(2, dZ);
-        linearConstraint2.addTerm(2, dY);
+        linearConstraint2.addTermLhs(2, dZ);
+        linearConstraint2.addTermLhs(2, dY);
 
         org.andy.optimization.model.LinearConstraint linearConstraint3 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 90);
-        linearConstraint3.addTerm(1, dY);
-        linearConstraint3.addTerm(1, dZ);
+        linearConstraint3.addTermLhs(1, dY);
+        linearConstraint3.addTermLhs(1, dZ);
 
 
         // construct the model
@@ -118,12 +119,12 @@ public class ModelTest {
 
         // Define constraints
         org.andy.optimization.model.LinearConstraint linearConstraint1 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 7);
-        linearConstraint1.addTerm(1, dX);
-        linearConstraint1.addTerm(3, dY);
+        linearConstraint1.addTermLhs(1, dX);
+        linearConstraint1.addTermLhs(3, dY);
 
         org.andy.optimization.model.LinearConstraint linearConstraint2 = new org.andy.optimization.model.LinearConstraint(Relationship.LEQ, 10);
-        linearConstraint2.addTerm(3, dX);
-        linearConstraint2.addTerm(2, dY);
+        linearConstraint2.addTermLhs(3, dX);
+        linearConstraint2.addTermLhs(2, dY);
 
 
         // construct the model

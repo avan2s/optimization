@@ -126,7 +126,7 @@ public class BranchAndBound {
 
         // decisionVariable >= upRoundedValue
         LinearConstraint linearConstraint = new LinearConstraint(relationship, roundedValue);
-        linearConstraint.addTerm(1, decisionVariable);
+        linearConstraint.addTermLhs(1, decisionVariable);
         relaxation.addLinearConstraint(linearConstraint);
         return relaxation;
     }

@@ -40,7 +40,7 @@ public class LinearOptimizationModel implements ILinearOptimizationModel {
 
     @Override
     public void addLinearConstraint(LinearConstraint constraint) {
-        List<LinearTerm> terms = constraint.getLinearExpression().getTerms();
+        List<LinearTerm> terms = constraint.getLinearExpressionLhs().getTerms();
         for (LinearTerm term : terms) {
             DecisionVariable decisionVariable = term.getDecisionVariable();
             this.addDecisionVariable(decisionVariable);
@@ -50,11 +50,11 @@ public class LinearOptimizationModel implements ILinearOptimizationModel {
 
     @Override
     public void setObjective(LinearObjective objective) {
-    /* List<LinearTerm> currentObjectiveTerms = this.objective.getLinearExpression().getTerms();
+    /* List<LinearTerm> currentObjectiveTerms = this.objective.getLinearExpressionLhs().getTerms();
         for(LinearTerm currentObjectiveTerm : currentObjectiveTerms){
             DecisionVariable decisionVariable = currentObjectiveTerm.getDecisionVariable();
             for(LinearConstraint linearConstraint : linearConstraints){
-                List<LinearTerm> constraintTerms = linearConstraint.getLinearExpression().getTerms();
+                List<LinearTerm> constraintTerms = linearConstraint.getLinearExpressionLhs().getTerms();
                 for(LinearTerm constraintTerm : constraintTerms){
                     if(constraintTerm.getDecisionVariable())
                 }
