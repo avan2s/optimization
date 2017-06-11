@@ -18,21 +18,21 @@ public class ProblemSolution {
         this.variableToSolutionValue = new HashMap<>();
     }
 
-    public boolean isBetterThan(ProblemSolution otherSolution, GoalType goalType){
-        if(otherSolution == null){
+    public boolean isBetterThan(ProblemSolution otherSolution, GoalType goalType) {
+        if (otherSolution == null) {
             return false;
         }
 
-        if(goalType == GoalType.MAXIMIZE){
-            if(this.objectiveValue > otherSolution.getObjectiveValue()){
+        if (goalType == GoalType.MAXIMIZE) {
+            if (this.objectiveValue > otherSolution.getObjectiveValue()) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
-            if(this.objectiveValue < otherSolution.getObjectiveValue()){
+        } else {
+            if (this.objectiveValue < otherSolution.getObjectiveValue()) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         }
@@ -40,6 +40,10 @@ public class ProblemSolution {
 
     public Map<DecisionVariable, Double> getVariableToSolutionValue() {
         return variableToSolutionValue;
+    }
+
+    public Double getSolutionValue(DecisionVariable decisionVariable) {
+        return this.variableToSolutionValue.get(decisionVariable);
     }
 
     public double getObjectiveValue() {

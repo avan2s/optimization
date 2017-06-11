@@ -175,8 +175,9 @@ public class ModelTest {
         // Solve the problem with a solver
         LinearModelSolver linearModelSolver = new LinearModelSolver(model);
         ProblemSolution solution = linearModelSolver.solve();
+
         for (DecisionVariable decisionVariable : model.getDecisionVariables()) {
-            System.out.println(decisionVariable.getName() + " = " + solution.getVariableToSolutionValue().get(decisionVariable));
+            System.out.println(decisionVariable.getName() + " = " + solution.getSolutionValue(decisionVariable));
         }
         System.out.println("objective = " + solution.getObjectiveValue());
         System.out.println("elapsedTime:" + solution.getTimeElapsed() + " ms");
