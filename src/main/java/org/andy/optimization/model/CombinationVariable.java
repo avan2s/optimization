@@ -26,13 +26,16 @@ public class CombinationVariable extends DecisionVariable {
         // for each allowed value one binary decision variable
         int nameIndex = 0;
 
-        // allowed values [2,3,5] 0> insert binary sub decision variables where x1 means 2 is chosen, x2 => 3 is chosen, x3=> 5 is chosen, when xi=1 => chosen else xi=0 => not chosen
+        // allowed values [2,3,5] -> insert binary sub decision variables where x1 means 2 is chosen, x2 => 3 is chosen, x3=> 5 is chosen, when xi=1 => chosen else xi=0 => not chosen
         // w1 + w2 + w3 = 1 => only one value can be chosen
+
+        // equals constraint = 1
         this.chooseOnlyOneConstraint = new LinearConstraint(Relationship.EQ, 1);
 
         // replace combiVar Xi in {2,3,5} with 2w1 + 3w2 + 5w3
         this.linearExpressionToInsert = new LinearExpression();
         for (Double allowedValue : allowedValues) {
+            // create a binary decision variable wi for the allowed value
             String subName = this.name + "_" + nameIndex;
             DecisionVariable subVariable = new DecisionVariable(subName, DecisionVariableType.BINARY);
             this.variablesToCoefficent.put(subVariable, allowedValue);
@@ -43,6 +46,11 @@ public class CombinationVariable extends DecisionVariable {
         }
     }
 
+    /**
+     * find the coefficient for a binary decision variable in order to receive the solution's allowed value
+     * @param decisionVariable the binary decision variable, which coefficient represents the allowed value
+     * @return
+     */
     public Double findCoefficient(DecisionVariable decisionVariable) {
         return this.variablesToCoefficent.get(decisionVariable);
     }

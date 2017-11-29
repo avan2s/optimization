@@ -41,7 +41,7 @@ public class LinearModelSolver {
                         CombinationVariable combiVar = (CombinationVariable) decisionVariable;
                         // find the binary decision variable w1, w2, w3, that caintains value 1
                         DecisionVariable variableWithBinaryTrue = this.findVariableWithBinaryTrue(solution, combiVar);
-                        // the coefficent of w1 is the solution
+                        // the coefficent of the  wi is the solution, extract it
                         Double coefficient = combiVar.findCoefficient(variableWithBinaryTrue);
 
                         problemSolution.getVariableToSolutionValue().put(decisionVariable, coefficient);
